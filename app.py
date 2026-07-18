@@ -5,10 +5,6 @@ from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
 
-# ==============================
-# MySQL Database Connection
-# ==============================
-
 mysql_user = "root"
 mysql_password = quote_plus("Akshay@3602")
 mysql_host = "localhost"
@@ -21,9 +17,6 @@ engine = create_engine(
 )
 
 
-# ==============================
-# Streamlit Configuration
-# ==============================
 
 st.set_page_config(
     page_title="AI CSV Data Analyzer",
@@ -31,10 +24,6 @@ st.set_page_config(
     layout="wide"
 )
 
-
-# ==============================
-# Sidebar
-# ==============================
 
 st.sidebar.title("📊 Dashboard")
 
@@ -44,10 +33,6 @@ show_charts = st.sidebar.checkbox("Show Charts", True)
 show_insights = st.sidebar.checkbox("Show Business Insights", True)
 
 
-# ==============================
-# Title
-# ==============================
-
 st.title("📊 AI CSV Data Analyzer")
 
 st.markdown(
@@ -55,9 +40,6 @@ st.markdown(
 )
 
 
-# ==============================
-# Upload CSV
-# ==============================
 
 uploaded_file = st.file_uploader(
     "Upload CSV File",
@@ -70,9 +52,6 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 
 
-    # ==============================
-    # Save CSV Data To MySQL
-    # ==============================
 
     try:
 
@@ -101,10 +80,6 @@ if uploaded_file is not None:
     )
 
 
-    # ==============================
-    # Dataset Preview
-    # ==============================
-
     if show_data:
 
         st.subheader(
@@ -117,10 +92,6 @@ if uploaded_file is not None:
         )
 
 
-
-    # ==============================
-    # Search
-    # ==============================
 
     st.subheader(
         "🔍 Search Product"
@@ -163,10 +134,6 @@ if uploaded_file is not None:
 
 
 
-    # ==============================
-    # Dashboard Metrics
-    # ==============================
-
     st.divider()
 
 
@@ -198,10 +165,6 @@ if uploaded_file is not None:
 
 
 
-    # ==============================
-    # Summary
-    # ==============================
-
     if show_summary:
 
         st.divider()
@@ -217,10 +180,6 @@ if uploaded_file is not None:
         )
 
 
-
-    # ==============================
-    # Charts
-    # ==============================
 
     numeric_columns = df.select_dtypes(
         include="number"
@@ -311,23 +270,11 @@ if uploaded_file is not None:
                 fig,
                 use_container_width=True
             )
-
-
-
-    # ==============================
-    # Business Insights
-    # ==============================
-
     if show_insights:
-
-
         st.divider()
-
         st.subheader(
             "📈 Business Insights"
         )
-
-
         for col in numeric_columns:
 
             st.success(
@@ -345,10 +292,6 @@ if uploaded_file is not None:
             )
 
 
-
-    # ==============================
-    # Download
-    # ==============================
 
     st.divider()
 
