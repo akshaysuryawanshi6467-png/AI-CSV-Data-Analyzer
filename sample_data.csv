@@ -1,6 +1,26 @@
-Product,Sales,Profit
-Laptop,50000,8000
-Mobile,30000,5000
-TV,45000,7000
-Watch,15000,2000
-Shoes,12000,1500
+Product,Category,Sales,Quantity,Profit,Rating
+Laptop,Electronics,275000,5,55000,4.5
+Mobile,Electronics,200000,10,40000,4.2
+Keyboard,Accessories,22500,15,5000,4.0
+Mouse,Accessories,16000,20,3500,4.3
+Monitor,Electronics,96000,8,22000,4.6
+Tablet,Electronics,180000,6,35000,4.4
+Camera,Electronics,180000,4,45000,4.7
+Printer,Electronics,45000,3,9000,3.9
+Smartwatch,Accessories,63000,9,12000,4.5
+Headphones,Accessories,30000,12,7000,4.1
+Keyboard RGB,Accessories,35000,18,8000,4.4
+Gaming Laptop,Electronics,350000,7,75000,4.8
+Smart TV,Electronics,120000,5,25000,4.3
+Air Conditioner,Home Appliance,45000,6,10000,4.0
+Refrigerator,Home Appliance,85000,4,18000,4.5
+Washing Machine,Home Appliance,65000,3,14000,4.2
+Coffee Machine,Kitchen,25000,8,6000,4.1
+Microwave,Kitchen,30000,5,7500,4.0
+Office Chair,Furniture,18000,10,4000,4.3
+Desk,Furniture,22000,6,5000,4.4
+Tablet Pro,Electronics,250000,8,60000,4.7
+Phone Case,Accessories,5000,50,1000,3.8
+Power Bank,Accessories,12000,25,3000,4.2
+Bluetooth Speaker,Electronics,15000,20,3500,4.5
+Webcam,Electronics,9000,15,2500,4.1
