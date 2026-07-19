@@ -4,19 +4,15 @@ import plotly.express as px
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
-
 mysql_user = "root"
 mysql_password = quote_plus("Akshay@3602")
 mysql_host = "localhost"
 mysql_port = "3306"
 mysql_database = "ai_csv_analyzer"
 
-
 engine = create_engine(
     f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
 )
-
-
 
 st.set_page_config(
     page_title="AI CSV Data Analyzer",
@@ -24,297 +20,138 @@ st.set_page_config(
     layout="wide"
 )
 
-
 st.sidebar.title("📊 Dashboard")
-
 show_data = st.sidebar.checkbox("Show Dataset", True)
 show_summary = st.sidebar.checkbox("Show Summary", True)
 show_charts = st.sidebar.checkbox("Show Charts", True)
 show_insights = st.sidebar.checkbox("Show Business Insights", True)
 
-
 st.title("📊 AI CSV Data Analyzer")
+st.markdown("Analyze your CSV file with interactive charts and insights.")
 
-st.markdown(
-    "Analyze your CSV file with interactive charts and insights."
-)
-
-
-
-uploaded_file = st.file_uploader(
-    "Upload CSV File",
-    type=["csv"]
-)
-
+uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
 
 if uploaded_file is not None:
 
     df = pd.read_csv(uploaded_file)
 
-
-
     try:
-
         df.to_sql(
             name="uploaded_data",
             con=engine,
             if_exists="replace",
             index=False
         )
-
-        st.success(
-            "✅ Data saved to MySQL successfully!"
-        )
-
+        st.success("✅ Data saved to MySQL successfully!")
 
     except Exception as e:
+        st.error(f"MySQL Connection Error: {e}")
 
-        st.error(
-            f"MySQL Connection Error: {e}"
-        )
-
-
-
-    st.success(
-        "✅ Dataset Uploaded Successfully!"
-    )
-
+    st.success("✅ Dataset Uploaded Successfully!")
 
     if show_data:
+        st.subheader("📄 Dataset Preview")
+        st.dataframe(df, use_container_width=True)
 
-        st.subheader(
-            "📄 Dataset Preview"
-        )
-
-        st.dataframe(
-            df,
-            use_container_width=True
-        )
-
-
-
-    st.subheader(
-        "🔍 Search Product"
-    )
-
+    st.subheader("🔍 Search Product")
 
     if "Product" in df.columns:
-
-        search = st.text_input(
-            "Search Product Name"
-        )
-
+        search = st.text_input("Search Product Name")
 
         if search:
-
             filtered = df[
-                df["Product"]
-                .astype(str)
-                .str.contains(
-                    search,
-                    case=False
-                )
+                df["Product"].astype(str).str.contains(search, case=False)
             ]
-
-            st.dataframe(filtered)
-
-
         else:
-
             filtered = df
-
-
     else:
-
         filtered = df
+        st.info("No Product column found.")
 
-        st.info(
-            "No Product column found."
-        )
-
-
+    if not filtered.empty:
+        st.dataframe(filtered, use_container_width=True)
 
     st.divider()
 
-
     col1, col2, col3, col4 = st.columns(4)
 
-
-    col1.metric(
-        "Rows",
-        df.shape[0]
-    )
-
-
-    col2.metric(
-        "Columns",
-        df.shape[1]
-    )
-
-
-    col3.metric(
-        "Missing Values",
-        int(df.isnull().sum().sum())
-    )
-
-
-    col4.metric(
-        "Duplicate Rows",
-        int(df.duplicated().sum())
-    )
-
-
+    col1.metric("Rows", df.shape[0])
+    col2.metric("Columns", df.shape[1])
+    col3.metric("Missing Values", int(df.isnull().sum().sum()))
+    col4.metric("Duplicate Rows", int(df.duplicated().sum()))
 
     if show_summary:
-
         st.divider()
+        st.subheader("📊 Summary Statistics")
+        st.dataframe(df.describe(), use_container_width=True)
 
-        st.subheader(
-            "📊 Summary Statistics"
-        )
-
-
-        st.dataframe(
-            df.describe(),
-            use_container_width=True
-        )
-
-
-
-    numeric_columns = df.select_dtypes(
-        include="number"
-    ).columns
-
+    numeric_columns = df.select_dtypes(include="number").columns
 
     if show_charts and len(numeric_columns) > 0:
 
-
         st.divider()
-
-        st.subheader(
-            "📈 Interactive Charts"
-        )
-
+        st.subheader("📈 Interactive Charts")
 
         chart = st.selectbox(
             "Select Chart",
-            [
-                "Bar",
-                "Line",
-                "Scatter",
-                "Pie",
-                "Histogram"
-            ]
+            ["Bar", "Line", "Scatter", "Pie", "Histogram"]
         )
 
-
-        column = st.selectbox(
-            "Select Column",
-            numeric_columns
-        )
-
+        column = st.selectbox("Select Column", numeric_columns)
 
         fig = None
 
-
         if chart == "Bar":
-
-            fig = px.bar(
-                df,
-                y=column
-            )
-
+            fig = px.bar(df, y=column)
 
         elif chart == "Line":
-
-            fig = px.line(
-                df,
-                y=column
-            )
-
+            fig = px.line(df, y=column)
 
         elif chart == "Scatter":
-
             if len(numeric_columns) >= 2:
-
                 fig = px.scatter(
                     df,
                     x=numeric_columns[0],
                     y=numeric_columns[1]
                 )
 
-
         elif chart == "Pie":
-
             if "Product" in df.columns:
-
                 fig = px.pie(
                     df,
                     names="Product",
                     values=column
                 )
-
+            else:
+                st.warning("Pie chart requires a Product column.")
 
         elif chart == "Histogram":
+            fig = px.histogram(df, x=column)
 
-            fig = px.histogram(
-                df,
-                x=column
-            )
+        if fig is not None:
+            st.plotly_chart(fig, use_container_width=True)
 
-
-
-        if fig:
-
-            st.plotly_chart(
-                fig,
-                use_container_width=True
-            )
     if show_insights:
         st.divider()
-        st.subheader(
-            "📈 Business Insights"
-        )
+        st.subheader("📈 Business Insights")
+
         for col in numeric_columns:
-
-            st.success(
-                f"Highest {col}: {df[col].max()}"
-            )
-
-
-            st.info(
-                f"Average {col}: {df[col].mean():.2f}"
-            )
-
-
-            st.warning(
-                f"Lowest {col}: {df[col].min()}"
-            )
-
-
+            st.success(f"Highest {col}: {df[col].max()}")
+            st.info(f"Average {col}: {df[col].mean():.2f}")
+            st.warning(f"Lowest {col}: {df[col].min()}")
 
     st.divider()
 
-    st.subheader(
-        "⬇ Download Filtered Data"
-    )
+    st.subheader("⬇ Download Filtered Data")
 
-
-    csv = filtered.to_csv(
-        index=False
-    )
-
+    csv = filtered.to_csv(index=False)
 
     st.download_button(
-        "Download CSV",
-        csv,
-        "filtered_data.csv",
-        "text/csv"
+        label="Download CSV",
+        data=csv,
+        file_name="filtered_data.csv",
+        mime="text/csv"
     )
-
 
 else:
-
-    st.info(
-        "📁 Please upload a CSV file."
-    )
+    st.info("📁 Please upload a CSV file.")
