@@ -27,6 +27,7 @@ show_charts = st.sidebar.checkbox("Show Charts", True)
 show_insights = st.sidebar.checkbox("Show Business Insights", True)
 
 st.title("📊 AI CSV Data Analyzer")
+st.caption("Version 1.1")
 st.markdown("Analyze your CSV file with interactive charts and insights.")
 
 uploaded_file = st.file_uploader("Upload CSV File", type=["csv"])
